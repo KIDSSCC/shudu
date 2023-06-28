@@ -31,6 +31,8 @@ void col_exd(int x, int y) {
 	}
 }
 
+
+
 void prttofl() {
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
@@ -42,6 +44,7 @@ void prttofl() {
 }
 
 void init_gen(int c) {
+	// 打乱了i_arr
 	for (int i = 0; i < 15; i++) {
 		int idx1 = rand() % 9;
 		int idx2 = rand() % 9;
@@ -50,6 +53,7 @@ void init_gen(int c) {
 		i_arr[idx2] = t;
 	}
 
+	//棋盘中心区域
 	int k = 0;
 	for (int i = 3; i < 6; i++) {
 		for (int j = 3; j < 6; j++) {
