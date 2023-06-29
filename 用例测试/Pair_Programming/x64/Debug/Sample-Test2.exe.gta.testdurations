@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GtaTestDurations xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Executable>E:\mycode\VisualStudio\Pair_Programming\x64\Debug\Sample-Test2.exe</Executable>
+  <TestDurations>
+    <TestDuration Test="TestCaseName.TestName" Duration="1" />
+    <TestDuration Test="test2.TestName" Duration="2" />
+    <TestDuration Test="sudoku.EndGame" Duration="431" />
+    <TestDuration Test="sudoku.DefaultStartGame" Duration="539" />
+    <TestDuration Test="sudoku.StartGame_Level" Duration="1906" />
+    <TestDuration Test="sudoku.StartGame_Range" Duration="571" />
+    <TestDuration Test="sudoku.particulatTset" Duration="1" />
+    <TestDuration Test="sudoku.Solve_Game" Duration="317" />
+    <TestDuration Test="sudoku.StartGame_Unique" Duration="565" />
+    <TestDuration Test="sudoku.WithoutArgs" Duration="1" />
+    <TestDuration Test="sudoku.SlovePathError" Duration="1" />
+    <TestDuration Test="sudoku.A_EndGame" Duration="443" />
+    <TestDuration Test="sudoku.B_DefaultStartGame" Duration="492" />
+    <TestDuration Test="sudoku.C_StartGame_Level" Duration="1907" />
+    <TestDuration Test="sudoku.D_StartGame_Range" Duration="572" />
+    <TestDuration Test="sudoku.E_StartGame_Unique" Duration="561" />
+    <TestDuration Test="sudoku.F_Solve_Game" Duration="305" />
+    <TestDuration Test="sudoku.G_WithoutArgs" Duration="1" />
+    <TestDuration Test="sudoku.H_SlovePathError" Duration="1" />
+    <TestDuration Test="sudoku.I_M_levelError" Duration="1" />
+    <TestDuration Test="sudoku.J_R_levelError" Duration="1" />
+    <TestDuration Test="sudoku.K_R_levelError" Duration="504" />
+    <TestDuration Test="sudoku.L_ArgsDependencyError" Duration="1" />
+    <TestDuration Test="sudoku.K_ArgsDependencyError" Duration="1" />
+    <TestDuration Test="sudoku.L_NecessaryArgsError" Duration="1" />
+  </TestDurations>
+</GtaTestDurations>
