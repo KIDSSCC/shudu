@@ -5,6 +5,8 @@
 #include <fstream>
 #include<array>
 #include<random>
+#include<memory>
+#include<algorithm>
 
 //通过宏定义，来访问单一模式中的变量。
 #define fin FileOperate::getInstance().finobject
@@ -85,66 +87,103 @@ public:
 		cout << "range is " << r1 << "--"<< r2 << endl;
 		cout << "u is " << u << endl;
 	}
+	void clear()
+	{
+		c = 0;
+		n = 0;
+		en = false;
+		m = -1;
+		r1 = 0;
+		r2 = 0;
+		u = 0;
+	}
 };
 
+void clearState()
+{	//用于清除当前的各项参数状态，避免单例模式下的参数状态污染
+	fin.close();
+	fout.close();
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			arr[i][j] = 0;
+			in[i][j] = 0;
+			out[i][j] = 0;
+			sol_arr[i][j] = 0;
+			sol_out[i][j] = 0;
+		}
+	}
+}
 
-void parameterAnalysis_cn(ParameterList& curr_parameter, int argc, char** argv)
+int parameterAnalysis_cn(ParameterList& curr_parameter, int argc, char** argv)
 {
+	int result = 0;
 	//解析命令行参数c和n
 	for (int i = 0; i < argc; i++)
 	{
 		if (argv[i][1] == 'c') {
 			curr_parameter.c = atoi(argv[i + 1]);
 			fout.open("final.txt");
+			result++;
 		}
 		else if (argv[i][1] == 'n')
 		{
 			curr_parameter.en = true;
 			curr_parameter.n = atoi(argv[i + 1]);
 			fout.open("game.txt");
+			result++;
 		}
 	}
+	return result;
 }
-void parameterAnalysis_mru(ParameterList& curr_parameter, int argc, char** argv)
+
+int parameterAnalysis_mru(ParameterList& curr_parameter, int argc, char** argv)
 {
 	//m,r,u参数都需要在n参数设置的情况下生效
-	if (!curr_parameter.en)
-	{
-		cout << "ERROR: argv needs -n parameter!\n";
-		exit(0);
-	}
+	bool match = false;
 	for (int i = 0; i < argc; i++)
 	{
 		//解析参数m，
 		if (argv[i][1] == 'm')
 		{
+			match = true;
 			int temp = atoi(argv[i + 1]);
 			if (!(temp == 1 || temp == 2 || temp == 3)) {
 				cout << "ERROR: level should in 1~3! \n";
-				exit(0);
+				return 1;
 			}
 			curr_parameter.m = -temp;//1，2，3转为-1，-2，-3来处理级别
 		}
 		//解析参数r
 		else if (argv[i][1] == 'r')
 		{
+			match = true;
 			//上限20、下限55
 			char* ptr = nullptr;
 			curr_parameter.r1 = atoi(strtok_s(argv[i + 1], "~", &ptr));
 			curr_parameter.r2 = atoi(strtok_s(nullptr, "~", &ptr));
 			if (!(20 <= curr_parameter.r1 && curr_parameter.r1 <= curr_parameter.r2 && curr_parameter.r2 <= 55)) {
 				cout << "ERROR: r1~r2 should in 20~55!\n";
-				exit(0);
+				return 2;
 			}
 		}
 		//解析参数u
 		else if (argv[i][1] == 'u')
 		{
+			match = true;
 			curr_parameter.u = 1;
 		}
 	}
+	if (match && !curr_parameter.en)
+	{
+		cout << "ERROR: argv needs -n parameter!\n";
+		return 3;
+	}
+	return 0;
 }
-bool parameterAnalysis_s(int argc, char** argv)
+
+int parameterAnalysis_s(int argc, char** argv)
 {
 	//解析参数s
 	for (int i = 0; i < argc; i++)
@@ -152,10 +191,15 @@ bool parameterAnalysis_s(int argc, char** argv)
 		if (argv[i][1] == 's') {
 			fin.open(argv[i + 1]);
 			fout.open("sudoku.txt");
-			return true;//这里一定不要忘记！！！！不然会执行gen函数
+			if (!fin.is_open())
+			{
+				cout << "Error:path not exists\n";
+				return 1;
+			}
+			return 0;//这里一定不要忘记！！！！不然会执行gen函数
 		}
 	}
-	return false;
+	return -1;
 }
 
 
@@ -250,7 +294,8 @@ void set_lev(int m,int r1,int r2) {
 	int rangeR = (r1 == r2) ? r1 : getRandom() % (r2 - r1) + r1;
 	int level = (r1 == 0 && r2 == 0) ? m : rangeR;
 	std::array<int, 3> blocks{ 27,36,45 };
-	level < 0 ? dig(blocks[-level]) : dig(level);
+	int index = -level - 1;
+	level < 0 ? dig(blocks[index]) : dig(level);
 }
 
 bool do_solve(int u);
@@ -483,24 +528,54 @@ bool do_solve(int u) {
 int main(int argc, char** argv) {
 	ParameterList curr_para;
 	if (argc <= 1) {
-		cout << "please input some args...";
+		cout << "Error:please input some args...\n";
+		curr_para.clear();
+		clearState();
 		return 0;
 	}
-	if (parameterAnalysis_s(argc, argv))
+
+	int s_condition = parameterAnalysis_s(argc, argv);
+	if (s_condition>=0)
 	{
-		
+		if (s_condition == 1)
+		{
+			//需要求解的数独不存在
+			curr_para.clear();
+			clearState();
+			return 0;
+		}
 		while (!readsudoku()) { //每次读入一个棋盘，返回1代表文件读完了
 			do_solve(curr_para.u);//对当前棋盘进行求解
 		}
-		
+		curr_para.clear();
+		clearState();
 		return 0;
 	}
-	parameterAnalysis_cn(curr_para, argc, argv);
-	parameterAnalysis_mru(curr_para, argc, argv);
+
+	int cn_condition=parameterAnalysis_cn(curr_para, argc, argv);
+	int mru_condition=parameterAnalysis_mru(curr_para, argc, argv);
+	
+	if (mru_condition > 0)
+	{
+		//3:m的范围不对，4:r的范围不对，5:没有n参数
+		curr_para.clear();
+		clearState();
+		return 0;
+	}
+
+	if (cn_condition == 0)
+	{
+		//缺少必要参数
+		cout<<"Error: missing necessary parameters\n";
+		curr_para.clear();
+		clearState();
+		return 0;
+	}
 
 	gen(curr_para.c, curr_para.n, curr_para.m, curr_para.r1, curr_para.r2, curr_para.u);
 
 	curr_para.paraPrint();
-
+	curr_para.clear();
+	clearState();
 	return 0;
 }
