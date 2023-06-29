@@ -120,7 +120,7 @@ int parameterAnalysis_cn(ParameterList& curr_parameter, int argc, char** argv)
 {
 	int result = 0;
 	//解析命令行参数c和n
-	for (int i = 0; i < argc; i++)
+	for (int i = 1; i < argc; i++)
 	{
 		if (argv[i][1] == 'c') {
 			curr_parameter.c = atoi(argv[i + 1]);
@@ -142,7 +142,7 @@ int parameterAnalysis_mru(ParameterList& curr_parameter, int argc, char** argv)
 {
 	//m,r,u参数都需要在n参数设置的情况下生效
 	bool match = false;
-	for (int i = 0; i < argc; i++)
+	for (int i = 1; i < argc; i++)
 	{
 		//解析参数m，
 		if (argv[i][1] == 'm')
@@ -186,7 +186,7 @@ int parameterAnalysis_mru(ParameterList& curr_parameter, int argc, char** argv)
 int parameterAnalysis_s(int argc, char** argv)
 {
 	//解析参数s
-	for (int i = 0; i < argc; i++)
+	for (int i = 1; i < argc; i++)
 	{
 		if (argv[i][1] == 's') {
 			fin.open(argv[i + 1]);
@@ -527,7 +527,7 @@ bool do_solve(int u) {
 
 int main(int argc, char** argv) {
 	ParameterList curr_para;
-	if (argc <= 1) {
+	if (argc <= 2) {
 		cout << "Error:please input some args...\n";
 		curr_para.clear();
 		clearState();
